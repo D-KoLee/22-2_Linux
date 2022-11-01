@@ -12,28 +12,8 @@ bcgLogin="[44m"
 cursor=0
 nowCursor=-1
 currentShow=0
-cnt=0
-
-file=`cat ./auth.txt`
-data=`echo $file`
-splitData=`echo $data | tr "," " "`
-#splitData=`echo $splitData | tr " " '\r\n'`
-SIZE=20
-auth1p=0
-auth2p=0
-authSignIn=1
-authDup=1
-i=""
-
-usrDATA=""
-usrWin=0
-usrLose=0
-usrID="ID"
-usrPW="PW"
-showID="         ${usrID}         "
-showPW="         ${usrPW}         "
-_showID="           ${usrID}           "
-_showPW="           ${usrPW}           "
+usrID="         ID         "
+usrPW="         PW         "
 
 init_vars(){
     bcgJoin="[44m"
@@ -85,9 +65,9 @@ show_menu_signIn(){
     echo ''
     echo ''
     echo ''
-    echo "                   ${bcgID}${showID}[0m" "   ${bcgDupCheck}  Duplicate check  [0m"
+    echo "                   ${bcgID}         ID         [0m" "   ${bcgDupCheck}  Duplicate check  [0m"
     echo ''
-    echo "                   ${bcgPW}${showPW}[0m"
+    echo "                   ${bcgPW}         PW         [0m"
     echo ''
     echo ''
     echo "                          ${bcgSignIn}  SIGN IN  [0m""     ${bcgExit}   EXIT   [0m "
@@ -106,9 +86,9 @@ show_menu_signOut(){
     echo ''
     echo ''
     echo ''
-    echo "                           ${bcgID}${_showID}[0m"
+    echo "                           ${bcgID}           ID           [0m"
     echo ''
-    echo "                           ${bcgPW}${_showPW}[0m"
+    echo "                           ${bcgPW}           PW           [0m"
     echo ''
     echo ''
     echo ''
@@ -128,9 +108,9 @@ show_menu_1pLogin(){
     echo ''
     echo ''
     echo ''
-    echo "                           ${bcgID}${_showID}[0m"
+    echo "                           ${bcgID}           ID           [0m"
     echo ''
-    echo "                           ${bcgPW}${_showPW}[0m"
+    echo "                           ${bcgPW}           PW           [0m"
     echo ''
     echo ''
     echo ''
@@ -149,9 +129,9 @@ show_menu_2pLogin(){
     echo ''
     echo ''
     echo ''
-    echo "                           ${bcgID}${_showID}[0m"
+    echo "                           ${bcgID}           ID           [0m"
     echo ''
-    echo "                           ${bcgPW}${_showPW}[0m"
+    echo "                           ${bcgPW}           PW           [0m"
     echo ''
     echo ''
     echo ''
@@ -215,7 +195,7 @@ option_picked_main(){
 }
 
 option_picked_signIn(){
-read -n 1 input 
+    read -n 1 input 
     if [[ $input == '' ]]
     then
 	read -n 1 input 
@@ -238,14 +218,13 @@ read -n 1 input
     	fi
     elif [[ $input = `` ]]; then
 	case $nowCursor in
-	    0) init_vars; init_cursor; cnt=0; enterString; cursor=9
+	    0) init_vars; init_cursor; #type id
 	    ;;
-	    1) init_vars; init_cursor; dupCheck; updateDatas; exit
-		    #check the dups and print result and exit
+	    1) init_vars; init_cursor; #dup check. check the dups and print result and exit
 	    ;;
-	    2) init_vars; init_cursor; cnt=1; enterString; cursor=9
+	    2) #type pw
 	    ;;
-	    3) init_vars; init_cursor; signInDup; updateDatas; clear; exit
+	    3) init_cursor; #something change location by nowCursor and cursor
 	    ;;
 	    4) clear; exit  #dup check and write Info. And exit
 	    ;;
@@ -278,9 +257,9 @@ option_picked_signOut(){
     	fi
     elif [[ $input = `` ]]; then
 	case $nowCursor in
-	    0) init_vars; init_cursor; cnt=0; enterString; cursor=9
+	    0) init_cursor; show_menu_1pLogin;
 	    ;;
-	    1) init_vars; init_cursor; cnt=1; enterString; cursor=9
+	    1) init_cursor; show_menu_signIn;
 	    ;;
 	    2) init_cursor; 
 	    ;;
@@ -315,16 +294,11 @@ option_picked_login(){
     	fi
     elif [[ $input = `` ]]; then
 	case $nowCursor in
-	    0) init_cursor; cnt=0; enterString; cursor=9
+	    0) init_cursor; 
 	    ;;
-	    1) init_cursor; cnt=1; enterString; cursor=9
+	    1) init_cursor; 
 	    ;;
-	    2) if [[ $currentShow = 4 ]] && [[ $auth2p = 1 ]]; then
-		show_menu_success
-	    elif [[ $auth1p = 1 ]]; then
-		updateDatas
-		show_menu_2pLogin
-	    fi
+	    2) clear; 
 	    ;;
 	    3) clear; exit
 	    ;;
@@ -357,8 +331,6 @@ calcCursor_signOut(){
     if [[ $bcgExit = $bcgID ]] && [[ $bcgID = $bcgPW ]] && [[ $bcgPW = $bcgSignOut ]]
     then #first highlighting
 	nowCursor=0
-    elif [[ $cursor = 9 ]]; then
-	highlight
     elif [[ $nowCursor = 0 ]]; then #from ID to somewhere
 	if [[ $cursor = 0  ]]; then
 	    nowCursor=3
@@ -399,8 +371,6 @@ calcCursor_signIn(){
     if [[ $bcgExit = $bcgID ]] && [[ $bcgID = $bcgPW ]] && [[ $bcgPW = $bcgSignIn ]] && [[ $bcgSignIn = $bcgDupCheck ]]
     then
 	nowCursor=0
-    elif [[ $cursor = 9 ]]; then
-	highlight
     elif [[ $nowCursor = 0 ]]
     then #from ID to somewhere
 	if [[ $cursor = 0  ]]; then
@@ -448,8 +418,6 @@ calcCursor_login(){
     if [[ $bcgExit = $bcgID ]] && [[ $bcgID = $bcgPW ]] && [[ $bcgPW = $bcgLogin ]]
     then #first highlighting
 	nowCursor=0
-    elif [[ $cursor = 9 ]]; then
-	highlight
     elif [[ $nowCursor = 0 ]]; then #from ID to somewhere
 	if [[ $cursor = 0  ]]; then
 	    nowCursor=3
@@ -535,143 +503,6 @@ highlight(){
 	;;
 	4) show_menu_2pLogin
     esac
-}
-
-dupCheck(){
-    for i in $splitData
-    do
-	checkIdHere="\""$usrID
-	if [[ $i = $checkIdHere ]]; then
-	    echo "Same ID is already exist"
-	    sleep 3
-	    clear
-	    exit
-	fi
-    done
-    echo "You can register"
-    sleep 3
-    clear
-    exit
-}
-
-signInDup(){
-    for i in $splitData
-    do
-	if [[ $i = $usrID ]]; then
-	    authSignIn=0
-	    echo "SignIn Failed"
-	    sleep 3
-	    break
-	fi
-    done
-    if [[ $authSignIn = 1 ]]; then
-	if [[ $usrID != "ID" ]] && [[ $usrPW != "PW" ]]; then
-	    echo $usrDATA >> ./auth.txt
-	    echo "SignIn Success"
-	    sleep 3
-	fi
-    fi	
-}
-
-enterString(){
-    read inputData
-    echo $cnt
-    if [[ $cnt = 0 ]]; then
-	usrID=$inputData
-    elif [[ $cnt = 1 ]]; then
-	usrPW=$inputData
-    fi
-    usrDATA="\"$usrID, $usrPW, $usrWin, $usrLose\""
-    eraseBlank
-}
-
-updateDatas(){
-    usrID="ID"
-    usrPW="PW"
-    data=`echo $file`
-    splitData=`echo $data | tr "," " "`
-    splitData=`echo $splitData | tr " " '\r\n'`
-    eraseBlank
-}
-
-eraseBlank(){
-    len=24
-    if [[ $currentShow = 1 ]]; then
-	len=20
-    fi
-    if [[ $cnt = 0 ]]; then
-	if [[ $currentShow = 1 ]]; then
-	    showID=""
-	    charTime=${#usrID}
-	    blankTime=`expr $len - $charTime`
-	    front=`expr $blankTime / 2 + $blankTime % 2`
-	    back=`expr $blankTime / 2`
-	    while [[ $front > 0 ]]
-	    do
-		showID=$showID" "
-		front=`expr $front - 1`
-	    done
-	    showID=$showID$usrID
-	    while [[ $back > 0 ]]
-	    do
-		showID=$showID" "
-		back=`expr $back - 1`
-	    done
-	else
-	    _showID=""
-	    charTime=${#usrID}
-	    blankTime=`expr $len - $charTime`
-	    front=`expr $blankTime / 2 + $blankTime % 2`
-	    back=`expr $blankTime / 2`
-	    while [[ $front > 0 ]]
-	    do
-		_showID=$_showID" "
-		front=`expr $front - 1`
-	    done
-	    _showID=$_showID$usrID
-	    while [[ $back > 0 ]]
-	    do
-		_showID=$_showID" "
-		back=`expr $back - 1`
-	    done
-	fi
-    elif [[ $cnt = 1 ]]; then
-	if [[ $currentShow = 1 ]]; then
-	showPW=""
-	charTime=${#usrPW}
-	blankTime=`expr $len - $charTime`
-	front=`expr $blankTime / 2 + $blankTime % 2`
-	back=`expr $blankTime / 2`
-	while [[ $front > 0 ]]
-	do
-	    showPW=$showPW" "
-	    front=`expr $front - 1`
-	done
-	showPW=$showPW$usrPW
-	while [[ $back > 0 ]]
-	do
-	    showPW=$showPW" "
-	    back=`expr $back - 1`
-	done
-	else
-	    _showPW=""
-	    charTime=${#usrPW}
-	    blankTime=`expr $len - $charTime`
-	    front=`expr $blankTime / 2 + $blankTime % 2`
-	    back=`expr $blankTime / 2`
-	    while [[ $front > 0 ]]
-	    do
-		 _showPW=$_showPW" "
-		front=`expr $front - 1`
-	    done
-	    _showPW=$_showPW$usrPW
-	    while [[ $back > 0 ]]
-	    do
-		_showPW=$_showPW" "
-		back=`expr $back - 1`
-	    done
-	fi
-    fi   
 }
 
 clear

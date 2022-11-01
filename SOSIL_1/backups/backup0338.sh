@@ -16,14 +16,12 @@ cnt=0
 
 file=`cat ./auth.txt`
 data=`echo $file`
-splitData=`echo $data | tr "," " "`
-#splitData=`echo $splitData | tr " " '\r\n'`
+splitData=`echo $data | tr "\n","\n"`
 SIZE=20
 auth1p=0
 auth2p=0
 authSignIn=1
 authDup=1
-i=""
 
 usrDATA=""
 usrWin=0
@@ -240,7 +238,7 @@ read -n 1 input
 	case $nowCursor in
 	    0) init_vars; init_cursor; cnt=0; enterString; cursor=9
 	    ;;
-	    1) init_vars; init_cursor; dupCheck; updateDatas; exit
+	    1) init_vars; init_cursor; #dupCheck; updateDatas; exit
 		    #check the dups and print result and exit
 	    ;;
 	    2) init_vars; init_cursor; cnt=1; enterString; cursor=9
@@ -537,38 +535,17 @@ highlight(){
     esac
 }
 
-dupCheck(){
-    for i in $splitData
-    do
-	checkIdHere="\""$usrID
-	if [[ $i = $checkIdHere ]]; then
-	    echo "Same ID is already exist"
-	    sleep 3
-	    clear
-	    exit
-	fi
-    done
-    echo "You can register"
-    sleep 3
-    clear
-    exit
-}
-
 signInDup(){
     for i in $splitData
     do
 	if [[ $i = $usrID ]]; then
 	    authSignIn=0
-	    echo "SignIn Failed"
-	    sleep 3
 	    break
 	fi
     done
     if [[ $authSignIn = 1 ]]; then
 	if [[ $usrID != "ID" ]] && [[ $usrPW != "PW" ]]; then
 	    echo $usrDATA >> ./auth.txt
-	    echo "SignIn Success"
-	    sleep 3
 	fi
     fi	
 }
@@ -581,16 +558,16 @@ enterString(){
     elif [[ $cnt = 1 ]]; then
 	usrPW=$inputData
     fi
-    usrDATA="\"$usrID, $usrPW, $usrWin, $usrLose\""
+    usrDATA="$usrID, $usrPW, $usrWin, $usrLose"
     eraseBlank
 }
 
 updateDatas(){
     usrID="ID"
     usrPW="PW"
+    file=`cat ./auth.txt`
     data=`echo $file`
-    splitData=`echo $data | tr "," " "`
-    splitData=`echo $splitData | tr " " '\r\n'`
+    splitData=`echo $data | tr "\n","\n"`
     eraseBlank
 }
 
