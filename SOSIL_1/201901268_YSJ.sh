@@ -594,6 +594,10 @@ signInDup(){
 	    echo $usrDATA >> ./auth.txt
 	    echo "SignIn Success"
 	    sleep 3
+	elif [[ $usrID = "ID" ]] || [[ $usrPW = "PW" ]]; then
+	    echo "Please enter whole BLANKS"
+	    sleep 2
+	    show_menu_signIn
 	fi
     fi	
 }
